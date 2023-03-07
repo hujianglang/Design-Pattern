@@ -14,3 +14,91 @@
 - Command模式的根本目的在于将”行为请求者“与”行为实现者“解耦，在面向对象语言中，常见的实现手段是”将行为抽象为对象“。
 - 实现Command接口的具体命令对象ConcreteCommand有时候根据需要可能会保存一些额外的状态信息。通过使用Composite模式，可以将多个命令封装为一个“复合命令”MacroCommand。
 - Command模式与C++中的函数对象 有些类似。但两者定义行为接口的规范有所区别：Command以面向对象中的“接口-实现”来定义行为接口规范，更严格，但 有性能损失；C++函数对象以函数签名来定义行为接口规范，更灵活，性能更高。
+
+##### 代碼實現
+
+```
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Command{
+public:
+    virtual void execute() = 0;
+};
+
+class CopyCommand:public Command{
+public:
+    int id;
+    string arg;
+public:
+    CopyCommand(const string& a):arg(a){
+
+    }
+
+    void execute() override{
+        cout << "#1 process..." << arg <<　endl;
+    }
+};
+
+class CutCommand:public Command{
+    int arg;
+public:
+    CutCommand(const int &a):arg(a){
+
+    }
+    void execute() override{
+        cout << "#2 process..." << arg << endl;
+    }
+};
+
+class PasteCommand:public Command{
+    int arg;
+public:
+    PasteCommand(const int &a):arg(a){
+    }
+    void execute() override{
+        cout << "#2 process.." << endl;
+    }
+};
+
+class MacroCommand:public Command{
+    vector<unique_ptr<Command>> commands;
+public:
+    void addCommand(unique_ptr<Command> c){
+        commands.push_back(std::move(c));
+    }
+
+    void execute() override{
+        for(auto &c : commands){
+            c->execute();
+        }
+    }
+};
+
+void process(const Command& command){
+
+}
+
+template <typename T>
+class FunctionObject{
+public:
+    void operator()(T data){
+
+    }
+};
+
+
+int main()
+{
+    auto cmd1 = make_unique<CopyCommand>("Arg ###");
+    auto cmd2 = make_unique<CutCommand>(190);
+
+    MacroCommand macrol;
+    macrol.addCommand(cmd1);
+    macrol.addCommand(cmd2);
+    macro.execute();
+}
+```
