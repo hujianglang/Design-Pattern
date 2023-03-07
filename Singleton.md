@@ -86,3 +86,34 @@ Singleton* Singleton::getInstance()
 - Singleton实例模式中的实例构造器可以设置为protected以允许子类派生。
 - Singleton模式一般不要支持拷贝构造函数和Clone()接口，因为这有可能导致多个对象实例，与Singleton模式的初衷相违背。
 - 如何实现多线程环境下安全的Singleton?注意对双检查锁的正确实现。
+
+##### 其他參考：
+``` C++
+class MyClass{
+private:
+    MyClass() {};
+private:
+    static MyClass* m_instance;
+public:
+    static MyClass* GetInstance();
+    void func(int a);
+private:
+    std::mutex resource_mutex;
+};
+
+void MyClass::func(int a){
+
+}
+
+MyClass* MyClass::GetInstance()
+{
+    if(m_instance == nullptr){
+        std::unique_lock<std::mutex> myMutex(resource_mutex);
+        if(m_instance == nullptr){
+            m_instance = new MyClass();
+        }
+    }
+
+    return m_instance;
+}
+```
